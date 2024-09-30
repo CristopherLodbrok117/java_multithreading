@@ -3,7 +3,7 @@ package threading.monitor2;
 public class KitchenTasks {
 	private final int MAX_PIZZAS = 20;
 	private final int MAX_PIZZAS_COOKING = 4;
-	private final int MAX_PIZZAS_EATEN = 4;
+	private final int MAX_PIZZAS_TO_EAT = 4;
 	private final int TIME_EXECUTING_SECS = 3;
 	
 	/* Any object can potentially be a monitor. Avoid using String "literals",
@@ -55,17 +55,21 @@ public class KitchenTasks {
 	
 	public void eating() {
 		synchronized(monitor) {
-			int pizzasToEat = Math.min(MAX_PIZZAS_EATEN, pizzas);
 			
-			pizzasToEat = getRandom(1, pizzasToEat);
+			if(pizzas > 0 ) {
+				int pizzasToEat = Math.min(MAX_PIZZAS_TO_EAT, pizzas);
+				
+				pizzasToEat = getRandom(1, pizzasToEat); // Bug. If consumer takes monitor first, there's gonna be negative pizzas
+				
+				executing("\nClient eating");
+				
+				pizzas -= pizzasToEat;
+				
+				System.out.println("(---) " + pizzasToEat + " pizzas");
+				showPizzas();
+				timePasses(1000);
+			}
 			
-			executing("\nClient eating");
-			
-			pizzas -= pizzasToEat;
-			
-			System.out.println("(---) " + pizzasToEat + " pizzas");
-			showPizzas();
-			timePasses(1000);
 			
 			if(chefSleeping) {
 				wakeUpBro();			// notify call
@@ -101,7 +105,7 @@ public class KitchenTasks {
 		return min + (int)(Math.random() * (max - min + 1));
 	}
 	
-	/*Simulates thread working time, printing a dot every 3 seconds*/
+	/*Simulates thread working time, printing a dot every second*/
 	public void executing(String task) {
 		synchronized(monitor){
 			System.out.print(task);

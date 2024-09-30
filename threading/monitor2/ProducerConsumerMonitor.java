@@ -4,7 +4,7 @@ package threading.monitor2;
 // https://medium.com/@adam.rizk9/demystifying-java-wait-notify-and-join-methods-for-multithreading-an-in-depth-look-ffb43a514bbc
 
 /*
- * Both threats better use the same monitor object, as wait and notify are called
+ * Both threads better use the same monitor object, as wait and notify are called
  * through its instance: monitor.wait(), monitor.notify()
  * 
  * With wait() the other thread must fulfill the condition of calling notify() and releasing the monitor
